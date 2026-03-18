@@ -7,594 +7,165 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --red:       #E63946;
-    --red-deep:  #c1121f;
-    --red-soft:  rgba(230,57,70,0.12);
-    --red-glow:  rgba(230,57,70,0.25);
-    --bg:        #0a0b0f;
-    --bg2:       #111318;
-    --surface:   #16181f;
-    --surface2:  #1d2029;
-    --border:    rgba(255,255,255,0.07);
-    --border2:   rgba(255,255,255,0.12);
-    --text:      #f0f2f8;
-    --text2:     #9aa0b8;
-    --text3:     #5c6380;
-    --green:     #22c55e;
-    --green-s:   rgba(34,197,94,0.12);
-    --yellow:    #f59e0b;
-    --font:      'Plus Jakarta Sans', sans-serif;
-    --mono:      'JetBrains Mono', monospace;
-    --radius:    14px;
+    --red: #d42027;
+    --red-light: #fdf1f1;
+    --red-mid: rgba(212,32,39,0.1);
+    --bg: #f4f5f7;
+    --white: #ffffff;
+    --surface2: #f8f9fb;
+    --border: #e4e6ec;
+    --text: #1a1d2e;
+    --text2: #4a5068;
+    --text3: #8a90a8;
+    --green: #16a34a;
+    --green-bg: #f0fdf4;
+    --green-bdr: #bbf7d0;
+    --yellow: #d97706;
+    --yellow-bg: #fffbeb;
+    --yellow-bdr: #fde68a;
+    --font: 'Plus Jakarta Sans', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    --radius: 12px;
     --radius-sm: 8px;
-    --shadow:    0 4px 24px rgba(0,0,0,0.4);
+    --shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
-  html { scroll-behavior: smooth; }
+  .page { max-width: 1200px; margin: 0 auto; padding: 28px 24px 60px; }
 
-  body {
-    font-family: var(--font);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-  }
+  .title-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 16px; flex-wrap: wrap; }
+  .title-left h1 { font-size: clamp(20px, 3vw, 28px); font-weight: 800; color: var(--text); letter-spacing: -0.4px; line-height: 1.15; }
+  .title-left h1 span { color: var(--red); }
+  .title-left p { margin-top: 4px; font-size: 13px; color: var(--text3); }
+  .badge { background: var(--red-light); border: 1px solid rgba(212,32,39,0.2); color: var(--red); border-radius: 20px; padding: 5px 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
 
-  /* ── NOISE TEXTURE ── */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 0;
-  }
+  .layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
+  @media (max-width: 800px) { .layout { grid-template-columns: 1fr; } }
 
-  /* ── HEADER ── */
-  .header {
-    background: linear-gradient(180deg, rgba(230,57,70,0.06) 0%, transparent 100%);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    position: relative;
-    z-index: 10;
-  }
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; background: var(--surface2); }
+  .card-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); flex-shrink: 0; }
+  .card-dot.green { background: var(--green); }
+  .card-title { font-size: 13px; font-weight: 700; color: var(--text); }
+  .card-body { padding: 20px; }
 
-  .header-inner {
-    max-width: 1000px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 64px;
-    gap: 16px;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .logo-mark {
-    width: 36px; height: 36px;
-    background: linear-gradient(135deg, var(--red), var(--red-deep));
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 800;
-    color: #fff;
-    letter-spacing: -1px;
-    box-shadow: 0 0 20px var(--red-glow);
-    flex-shrink: 0;
-  }
-
-  .logo-text { display: flex; flex-direction: column; gap: 1px; }
-
-  .logo-name {
-    font-size: 15px; font-weight: 700;
-    color: var(--text); line-height: 1;
-  }
-
-  .logo-sub {
-    font-size: 10px; font-weight: 500;
-    color: var(--text3); letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .header-badge {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: 20px;
-    padding: 5px 12px;
-    font-size: 11px; font-weight: 600;
-    color: var(--text2);
-    letter-spacing: 0.05em;
-    white-space: nowrap;
-  }
-
-  /* ── MAIN ── */
-  .main {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 32px 20px 60px;
-    position: relative; z-index: 1;
-  }
-
-  /* ── PAGE TITLE ── */
-  .page-title {
-    margin-bottom: 28px;
-  }
-
-  .page-title h1 {
-    font-size: clamp(24px, 4vw, 34px);
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.5px;
-  }
-
-  .page-title h1 em {
-    font-style: normal;
-    background: linear-gradient(90deg, var(--red), #ff6b6b);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .page-title p {
-    margin-top: 6px;
-    font-size: 14px;
-    color: var(--text2);
-  }
-
-  /* ── GRID LAYOUT ── */
-  .layout {
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 20px;
-    align-items: start;
-  }
-
-  @media (max-width: 780px) {
-    .layout { grid-template-columns: 1fr; }
-  }
-
-  /* ── CARD ── */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: var(--shadow);
-  }
-
-  .card-header {
-    padding: 18px 22px 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .card-icon {
-    width: 28px; height: 28px;
-    border-radius: 7px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-
-  .card-icon.red  { background: var(--red-soft); }
-  .card-icon.green { background: var(--green-s); }
-
-  .card-title {
-    font-size: 13px; font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.1px;
-  }
-
-  .card-body { padding: 22px; }
-
-  /* ── FORM FIELDS ── */
   .fields { display: flex; flex-direction: column; gap: 16px; }
-
-  .field-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-  }
-
-  @media (max-width: 480px) {
-    .field-row { grid-template-columns: 1fr; }
-  }
-
-  .field { display: flex; flex-direction: column; gap: 7px; }
-
-  .field label {
-    font-size: 11px; font-weight: 700;
-    color: var(--text3);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 500px) { .field-row { grid-template-columns: 1fr; } }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 11px; font-weight: 700; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; }
 
   .input-wrap { position: relative; display: flex; align-items: center; }
-
-  .input-icon {
-    position: absolute; left: 12px;
-    font-size: 13px; color: var(--text3);
-    font-family: var(--mono);
-    pointer-events: none;
-    line-height: 1;
-  }
-
-  .input-suffix {
-    position: absolute; right: 12px;
-    font-size: 13px; color: var(--text3);
-    font-family: var(--mono);
-    pointer-events: none;
-  }
+  .inp-pre { position: absolute; left: 11px; font-size: 13px; color: var(--text3); font-family: var(--mono); pointer-events: none; }
+  .inp-suf { position: absolute; right: 11px; font-size: 13px; color: var(--text3); font-family: var(--mono); pointer-events: none; }
 
   input[type="number"], select {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: var(--radius-sm);
-    padding: 10px 12px;
-    font-family: var(--mono);
-    font-size: 15px; font-weight: 500;
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 11px;
+    font-family: var(--mono); font-size: 14px; font-weight: 500; color: var(--text);
+    outline: none; transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
     -moz-appearance: textfield;
   }
-
   input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .has-pre input { padding-left: 24px; }
+  .has-suf input { padding-right: 32px; }
+  input:focus, select:focus { border-color: var(--red); background: var(--white); box-shadow: 0 0 0 3px var(--red-mid); outline: none; }
+  input[readonly] { background: var(--surface2); color: var(--text2); cursor: default; }
+  select { cursor: pointer; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238a90a8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 11px center; padding-right: 30px; }
 
-  .has-icon input, .has-icon select { padding-left: 26px; }
-  .has-suffix input { padding-right: 34px; }
+  .msp-pills { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 2px; }
+  .msp-pill { padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface2); font-size: 12px; font-weight: 600; color: var(--text2); cursor: pointer; transition: all 0.15s; user-select: none; white-space: nowrap; }
+  .msp-pill:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+  .msp-pill.active { background: var(--red); border-color: var(--red); color: #fff; }
 
-  input:focus, select:focus {
-    border-color: var(--red);
-    background: rgba(230,57,70,0.04);
-    box-shadow: 0 0 0 3px var(--red-soft);
-  }
+  .divider { height: 1px; background: var(--border); margin: 18px 0; }
 
-  select {
-    cursor: pointer;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%235c6380' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 32px;
-  }
+  .results-stack { display: flex; flex-direction: column; gap: 10px; }
+  .r-item { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface2); transition: all 0.25s; }
+  .r-item.hero { background: var(--green-bg); border-color: var(--green-bdr); padding: 18px 20px; }
+  .r-item.hero-neg { background: var(--red-light); border-color: rgba(212,32,39,0.25); padding: 18px 20px; }
+  .r-left { display: flex; flex-direction: column; gap: 2px; }
+  .r-label { font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; }
+  .r-sub { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+  .r-val { font-family: var(--mono); font-size: 18px; font-weight: 500; color: var(--text); white-space: nowrap; transition: color 0.25s; }
+  .r-item.hero .r-val { font-size: 26px; font-weight: 700; color: var(--green); }
+  .r-item.hero-neg .r-val { font-size: 26px; font-weight: 700; color: var(--red); }
 
-  /* ── DIVIDER ── */
-  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+  .gauge { margin-top: 6px; }
+  .gauge-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .gauge-title { font-size: 11px; font-weight: 700; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .gauge-pct { font-size: 13px; font-family: var(--mono); font-weight: 500; color: var(--text2); }
+  .gauge-track { height: 8px; background: var(--surface2); border-radius: 100px; border: 1px solid var(--border); overflow: hidden; }
+  .gauge-fill { height: 100%; background: linear-gradient(90deg, var(--red), #f97316, #eab308, var(--green)); border-radius: 100px; width: 0%; transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .gauge-labels { display: flex; justify-content: space-between; margin-top: 5px; }
+  .gauge-labels span { font-size: 10px; color: var(--text3); font-family: var(--mono); }
 
-  /* ── RESULTS SIDEBAR ── */
-  .results-stack { display: flex; flex-direction: column; gap: 12px; }
+  .formula-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; margin-top: 12px; }
+  .formula-title { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+  .formula-lines { display: flex; flex-direction: column; gap: 5px; font-size: 12px; font-family: var(--mono); color: var(--text2); line-height: 1.6; }
+  .formula-lines .key { color: var(--red); font-weight: 500; }
 
-  .result-item {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    transition: border-color 0.3s, background 0.3s;
-  }
-
-  .result-item.big {
-    background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(34,197,94,0.03));
-    border-color: rgba(34,197,94,0.2);
-    padding: 18px 20px;
-  }
-
-  .result-item.negative {
-    background: linear-gradient(135deg, rgba(230,57,70,0.1), rgba(230,57,70,0.04));
-    border-color: rgba(230,57,70,0.3);
-  }
-
-  .result-left { display: flex; flex-direction: column; gap: 3px; }
-
-  .result-label {
-    font-size: 10px; font-weight: 700;
-    color: var(--text3); letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .result-sub {
-    font-size: 11px; color: var(--text3);
-    font-family: var(--mono);
-  }
-
-  .result-value {
-    font-family: var(--mono);
-    font-size: 20px; font-weight: 500;
-    color: var(--text);
-    white-space: nowrap;
-    transition: color 0.3s;
-  }
-
-  .result-item.big .result-value { font-size: 26px; color: var(--green); }
-  .result-item.negative .result-value { color: var(--red); }
-
-  /* ── GAUGE ── */
-  .gauge { margin-top: 4px; }
-
-  .gauge-track {
-    height: 6px;
-    background: var(--surface2);
-    border-radius: 100px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-  }
-
-  .gauge-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--red), #ff6b35, var(--yellow), var(--green));
-    border-radius: 100px;
-    width: 0%;
-    transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
-  }
-
-  .gauge-meta {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 5px;
-  }
-
-  .gauge-meta span {
-    font-size: 10px; color: var(--text3);
-    font-family: var(--mono);
-  }
-
-  /* ── MSP SELECTOR PILLS ── */
-  .msp-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 4px;
-  }
-
-  .msp-pill {
-    padding: 6px 12px;
-    border-radius: 20px;
-    border: 1px solid var(--border2);
-    background: var(--surface2);
-    font-size: 12px; font-weight: 600;
-    color: var(--text2);
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-    user-select: none;
-  }
-
-  .msp-pill:hover { border-color: var(--red); color: var(--red); }
-
-  .msp-pill.active {
-    background: var(--red-soft);
-    border-color: var(--red);
-    color: var(--red);
-  }
-
-  /* ── COLLAPSIBLE ── */
-  .collapsible { overflow: hidden; }
-
-  .collapse-trigger {
-    width: 100%;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 22px;
-    background: none; border: none;
-    cursor: pointer;
-    color: var(--text2);
-    font-family: var(--font);
-    font-size: 13px; font-weight: 600;
-    letter-spacing: 0.02em;
-    transition: color 0.15s;
-    border-top: 1px solid var(--border);
-  }
-
-  .collapse-trigger:hover { color: var(--text); }
-
-  .collapse-trigger .chevron {
-    width: 16px; height: 16px;
-    border: 1px solid var(--border2);
-    border-radius: 4px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; color: var(--text3);
-    transition: transform 0.2s;
-    flex-shrink: 0;
-  }
-
-  .collapse-trigger.open .chevron { transform: rotate(180deg); }
-
-  .collapse-body {
-    display: none;
-    padding: 0 22px 22px;
-  }
-
+  .collapse-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: var(--surface2); border: none; border-top: 1px solid var(--border); cursor: pointer; font-family: var(--font); font-size: 12px; font-weight: 700; color: var(--text2); transition: background 0.15s, color 0.15s; }
+  .collapse-btn:hover { background: var(--red-light); color: var(--red); }
+  .collapse-btn .chev { font-size: 10px; color: var(--text3); transition: transform 0.2s; }
+  .collapse-btn.open .chev { transform: rotate(180deg); }
+  .collapse-body { display: none; padding: 20px; border-top: 1px solid var(--border); background: var(--white); }
   .collapse-body.open { display: block; }
 
-  /* ── MSP TABLE ── */
-  .msp-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-
-  .msp-table th {
-    text-align: left;
-    padding: 8px 10px;
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--text3);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .msp-table td {
-    padding: 10px 10px;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--text2);
-  }
-
-  .msp-table td:first-child { font-family: var(--font); color: var(--text); }
+  .msp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .msp-table th { text-align: left; padding: 8px 10px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); border-bottom: 1px solid var(--border); background: var(--surface2); }
+  .msp-table td { padding: 10px; border-bottom: 1px solid var(--border); color: var(--text2); font-family: var(--mono); font-size: 13px; }
+  .msp-table td:first-child { font-family: var(--font); color: var(--text); font-weight: 600; }
   .msp-table td:last-child { text-align: right; }
   .msp-table tr:last-child td { border-bottom: none; }
+  .msp-table tr.active-row td { background: var(--red-light); color: var(--red); }
+  .msp-table tr.active-row td:first-child::after { content: ' ✦'; font-size: 10px; }
 
-  .msp-table tr.active-msp td {
-    color: var(--red);
-    background: var(--red-soft);
-  }
+  .weekly-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  @media (max-width: 500px) { .weekly-grid { grid-template-columns: 1fr; } }
+  .w-item { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; }
+  .w-item.hl { background: var(--green-bg); border-color: var(--green-bdr); }
+  .w-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 4px; }
+  .w-val { font-family: var(--mono); font-size: 16px; font-weight: 500; color: var(--text); }
+  .w-item.hl .w-val { color: var(--green); }
+  .w-sub { font-size: 11px; color: var(--text3); font-family: var(--mono); margin-top: 2px; }
 
-  .msp-table tr.active-msp td:first-child::after {
-    content: ' ✦';
-    font-size: 10px;
-  }
-
-  /* ── WEEKLY SECTION ── */
-  .weekly-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 16px;
-  }
-
-  @media (max-width: 480px) {
-    .weekly-grid { grid-template-columns: 1fr; }
-  }
-
-  .weekly-item {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
-  }
-
-  .weekly-item.highlight {
-    background: rgba(34,197,94,0.06);
-    border-color: rgba(34,197,94,0.2);
-  }
-
-  .weekly-label {
-    font-size: 10px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.1em;
-    color: var(--text3);
-    margin-bottom: 4px;
-  }
-
-  .weekly-value {
-    font-family: var(--mono);
-    font-size: 17px; font-weight: 500;
-    color: var(--text);
-  }
-
-  .weekly-item.highlight .weekly-value { color: var(--green); }
-
-  .weekly-sub {
-    font-size: 11px; color: var(--text3);
-    font-family: var(--mono);
-    margin-top: 2px;
-  }
-
-  /* ── NOTICE ── */
-  .notice {
-    display: flex; gap: 10px; align-items: flex-start;
-    background: rgba(245,158,11,0.07);
-    border: 1px solid rgba(245,158,11,0.2);
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
-    margin-top: 16px;
-  }
-
-  .notice-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
-
-  .notice-text {
-    font-size: 12px; line-height: 1.6;
-    color: var(--text2);
-  }
-
+  .notice { display: flex; gap: 10px; align-items: flex-start; background: var(--yellow-bg); border: 1px solid var(--yellow-bdr); border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 16px; }
+  .notice-icon { font-size: 14px; flex-shrink: 0; }
+  .notice-text { font-size: 12px; line-height: 1.6; color: var(--text2); }
   .notice-text strong { color: var(--yellow); }
 
-  /* ── RESET BTN ── */
-  .btn-reset {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: none;
-    border: 1px solid var(--border2);
-    border-radius: var(--radius-sm);
-    padding: 9px 16px;
-    font-family: var(--font);
-    font-size: 12px; font-weight: 600;
-    color: var(--text3);
-    cursor: pointer;
-    transition: all 0.15s;
-    margin-top: 20px;
-  }
+  .btn-reset { display: inline-flex; align-items: center; gap: 6px; background: none; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 16px; font-family: var(--font); font-size: 12px; font-weight: 600; color: var(--text3); cursor: pointer; transition: all 0.15s; margin-top: 18px; }
+  .btn-reset:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
 
-  .btn-reset:hover { border-color: var(--red); color: var(--red); }
-
-  /* ── FOOTER ── */
-  .footer {
-    text-align: center;
-    padding: 20px;
-    font-size: 11px;
-    color: var(--text3);
-    border-top: 1px solid var(--border);
-    position: relative; z-index: 1;
-  }
-
-  .footer span { color: var(--red); }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .fade-up { animation: fadeUp 0.4s ease forwards; opacity: 0; }
-  .fade-up:nth-child(1) { animation-delay: 0s; }
-  .fade-up:nth-child(2) { animation-delay: 0.08s; }
-  .fade-up:nth-child(3) { animation-delay: 0.14s; }
-
-  /* ── CUSTOM MSP ── */
   #customMspRow { display: none; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .fade { animation: fadeUp 0.35s ease forwards; opacity: 0; }
+  .fade:nth-child(1) { animation-delay: 0s; }
+  .fade:nth-child(2) { animation-delay: 0.07s; }
+  .fade:nth-child(3) { animation-delay: 0.13s; }
 </style>
 </head>
 <body>
+<div class="page">
 
-<!-- HEADER -->
-<header class="header">
-  <div class="header-inner">
-    <div class="logo">
-      <div class="logo-mark">ZP</div>
-      <div class="logo-text">
-        <div class="logo-name">Zenex Partners</div>
-        <div class="logo-sub">Healthcare Staffing</div>
-      </div>
+  <div class="title-bar fade">
+    <div class="title-left">
+      <h1>Bill Rate <span>Margin</span> Calculator</h1>
+      <p>Real-time margin analysis for healthcare placements across all MSP clients</p>
     </div>
-    <div class="header-badge">Margin Calculator</div>
-  </div>
-</header>
-
-<!-- MAIN -->
-<main class="main">
-
-  <div class="page-title fade-up">
-    <h1>Bill Rate <em>Margin</em> Calculator</h1>
-    <p>Real-time margin analysis for healthcare placements across all MSP clients</p>
+    <div class="badge">Healthcare Staffing</div>
   </div>
 
   <div class="layout">
 
-    <!-- LEFT COLUMN -->
-    <div style="display:flex; flex-direction:column; gap:20px;">
-
-      <!-- INPUTS CARD -->
-      <div class="card fade-up">
+    <div style="display:flex; flex-direction:column; gap:18px;">
+      <div class="card fade">
         <div class="card-header">
-          <div class="card-icon red">⚡</div>
+          <div class="card-dot"></div>
           <div class="card-title">Rate Inputs</div>
         </div>
         <div class="card-body">
@@ -603,18 +174,18 @@
             <div class="field-row">
               <div class="field">
                 <label>Bill Rate</label>
-                <div class="input-wrap has-icon has-suffix">
-                  <span class="input-icon">$</span>
+                <div class="input-wrap has-pre has-suf">
+                  <span class="inp-pre">$</span>
                   <input type="number" id="billRate" value="65" step="0.01" min="0">
-                  <span class="input-suffix">/hr</span>
+                  <span class="inp-suf">/hr</span>
                 </div>
               </div>
               <div class="field">
                 <label>Pay Rate</label>
-                <div class="input-wrap has-icon has-suffix">
-                  <span class="input-icon">$</span>
+                <div class="input-wrap has-pre has-suf">
+                  <span class="inp-pre">$</span>
                   <input type="number" id="payRate" value="46" step="0.01" min="0">
-                  <span class="input-suffix">/hr</span>
+                  <span class="inp-suf">/hr</span>
                 </div>
               </div>
             </div>
@@ -628,356 +199,276 @@
                 <div class="msp-pill" data-val="5">Focus 5%</div>
                 <div class="msp-pill" data-val="6">AWS 6%</div>
                 <div class="msp-pill" data-val="7">Favorite 7%</div>
-                <div class="msp-pill" data-val="custom">Custom</div>
+                <div class="msp-pill" data-val="custom">Custom %</div>
               </div>
             </div>
 
             <div class="field" id="customMspRow">
               <label>Custom MSP %</label>
-              <div class="input-wrap has-suffix">
+              <div class="input-wrap has-suf">
                 <input type="number" id="customMsp" value="3" step="0.1" min="0" max="100">
-                <span class="input-suffix">%</span>
+                <span class="inp-suf">%</span>
               </div>
             </div>
 
             <div class="field-row">
               <div class="field">
                 <label>Loading Cost %</label>
-                <div class="input-wrap has-suffix">
+                <div class="input-wrap has-suf">
                   <input type="number" id="loadingPct" value="15" step="0.1" min="0" max="100">
-                  <span class="input-suffix">%</span>
+                  <span class="inp-suf">%</span>
                 </div>
               </div>
               <div class="field">
-                <label>Spread (before fees)</label>
-                <div class="input-wrap has-icon">
-                  <span class="input-icon">$</span>
-                  <input type="number" id="spreadDisplay" readonly tabindex="-1" style="color:var(--text2); cursor:default;">
+                <label>Gross Spread</label>
+                <div class="input-wrap has-pre">
+                  <span class="inp-pre">$</span>
+                  <input type="number" id="spreadDisp" readonly tabindex="-1">
                 </div>
               </div>
             </div>
 
           </div>
-
           <button class="btn-reset" onclick="resetDefaults()">↺ Reset to Defaults</button>
         </div>
 
-        <!-- MSP TABLE COLLAPSIBLE -->
-        <button class="collapse-trigger" id="mspTrigger" onclick="toggleCollapse('msp')">
-          <span>MSP Fee Comparison Table</span>
-          <span class="chevron">▾</span>
+        <button class="collapse-btn" id="mspTrigger" onclick="toggleCollapse('msp')">
+          MSP Fee Comparison Table <span class="chev">▼</span>
         </button>
         <div class="collapse-body" id="mspBody">
-          <table class="msp-table" id="mspTable">
-            <thead>
-              <tr>
-                <th>MSP Client</th>
-                <th>Fee %</th>
-                <th>Fee $</th>
-                <th>Net Margin</th>
-              </tr>
-            </thead>
+          <table class="msp-table">
+            <thead><tr><th>MSP Client</th><th>Fee %</th><th>Fee $</th><th>Net Margin</th></tr></thead>
             <tbody id="mspTbody"></tbody>
           </table>
         </div>
 
-        <!-- TRAVEL COLLAPSIBLE -->
-        <button class="collapse-trigger" id="travelTrigger" onclick="toggleCollapse('travel')">
-          <span>Travel Nurse Allowances & Weekly Gross</span>
-          <span class="chevron">▾</span>
+        <button class="collapse-btn" id="travelTrigger" onclick="toggleCollapse('travel')">
+          Travel Nurse — Allowances &amp; Weekly Gross <span class="chev">▼</span>
         </button>
         <div class="collapse-body" id="travelBody">
           <div class="fields">
             <div class="field-row">
               <div class="field">
                 <label>Lodging / Week</label>
-                <div class="input-wrap has-icon">
-                  <span class="input-icon">$</span>
-                  <input type="number" id="lodging" value="0" step="1" min="0">
-                </div>
+                <div class="input-wrap has-pre"><span class="inp-pre">$</span><input type="number" id="lodging" value="0" step="1" min="0"></div>
               </div>
               <div class="field">
                 <label>Meals / Week</label>
-                <div class="input-wrap has-icon">
-                  <span class="input-icon">$</span>
-                  <input type="number" id="meals" value="0" step="1" min="0">
-                </div>
+                <div class="input-wrap has-pre"><span class="inp-pre">$</span><input type="number" id="meals" value="0" step="1" min="0"></div>
               </div>
             </div>
             <div class="field-row">
               <div class="field">
                 <label>Hours / Week</label>
-                <div class="input-wrap">
-                  <input type="number" id="hoursPerWeek" value="36" step="1" min="1">
-                </div>
+                <div class="input-wrap"><input type="number" id="hoursPerWeek" value="36" step="1" min="1"></div>
               </div>
               <div class="field">
                 <label>OT Hours / Week</label>
-                <div class="input-wrap">
-                  <input type="number" id="otHours" value="0" step="1" min="0">
-                </div>
+                <div class="input-wrap"><input type="number" id="otHours" value="0" step="1" min="0"></div>
               </div>
             </div>
             <div class="field-row">
               <div class="field">
-                <label>OT Rate Multiplier</label>
-                <div class="input-wrap has-suffix">
-                  <input type="number" id="otRate" value="1.5" step="0.1" min="1">
-                  <span class="input-suffix">×</span>
-                </div>
+                <label>OT Multiplier</label>
+                <div class="input-wrap has-suf"><input type="number" id="otRate" value="1.5" step="0.1" min="1"><span class="inp-suf">x</span></div>
               </div>
               <div class="field">
-                <label>Non-Taxable Limit $</label>
-                <div class="input-wrap has-icon">
-                  <span class="input-icon">$</span>
-                  <input type="number" id="ntLimit" value="0" step="1" min="0">
-                </div>
+                <label>Non-Taxable Limit</label>
+                <div class="input-wrap has-pre"><span class="inp-pre">$</span><input type="number" id="ntLimit" value="0" step="1" min="0"></div>
               </div>
             </div>
           </div>
-
           <div class="weekly-grid">
-            <div class="weekly-item">
-              <div class="weekly-label">Taxable Weekly Pay</div>
-              <div class="weekly-value" id="r-taxable">—</div>
-              <div class="weekly-sub" id="r-taxableSub">—</div>
-            </div>
-            <div class="weekly-item">
-              <div class="weekly-label">Non-Taxable Weekly</div>
-              <div class="weekly-value" id="r-nt">—</div>
-              <div class="weekly-sub">lodging + meals</div>
-            </div>
-            <div class="weekly-item highlight">
-              <div class="weekly-label">Total Weekly Gross</div>
-              <div class="weekly-value" id="r-totalWeekly">—</div>
-              <div class="weekly-sub">taxable + non-taxable</div>
-            </div>
-            <div class="weekly-item">
-              <div class="weekly-label">Loading + Meals</div>
-              <div class="weekly-value" id="r-loadMeals">—</div>
-              <div class="weekly-sub">weekly combined</div>
-            </div>
+            <div class="w-item"><div class="w-label">Taxable Weekly Pay</div><div class="w-val" id="r-taxable">-</div><div class="w-sub" id="r-taxSub">-</div></div>
+            <div class="w-item"><div class="w-label">Non-Taxable Weekly</div><div class="w-val" id="r-nt">-</div><div class="w-sub">lodging + meals</div></div>
+            <div class="w-item hl"><div class="w-label">Total Weekly Gross</div><div class="w-val" id="r-totalW">-</div><div class="w-sub">taxable + non-taxable</div></div>
+            <div class="w-item"><div class="w-label">Loading + Meals</div><div class="w-val" id="r-loadMeals">-</div><div class="w-sub">weekly combined</div></div>
           </div>
-
           <div class="notice">
             <span class="notice-icon">💡</span>
-            <div class="notice-text"><strong>IRS Stipend Reminder:</strong> Ensure lodging + meals don't exceed GSA per diem for the assignment city. Excess becomes taxable wages.</div>
+            <div class="notice-text"><strong>IRS Reminder:</strong> Lodging + meals must not exceed GSA per diem for the assignment city. Excess is taxable.</div>
           </div>
         </div>
-
       </div>
     </div>
 
-    <!-- RIGHT COLUMN — RESULTS -->
-    <div class="fade-up" style="display:flex; flex-direction:column; gap:12px;">
-
+    <div style="display:flex; flex-direction:column; gap:16px;" class="fade">
       <div class="card">
         <div class="card-header">
-          <div class="card-icon green">📊</div>
-          <div class="card-title">Results</div>
+          <div class="card-dot green"></div>
+          <div class="card-title">Live Results</div>
         </div>
         <div class="card-body">
           <div class="results-stack">
-
-            <div class="result-item big" id="marginCard">
-              <div class="result-left">
-                <div class="result-label">Net Margin</div>
-                <div class="result-sub" id="r-marginPct">— % of bill rate</div>
+            <div class="r-item hero" id="marginCard">
+              <div class="r-left">
+                <div class="r-label">Net Margin</div>
+                <div class="r-sub" id="r-marginPct">-</div>
               </div>
-              <div class="result-value" id="r-margin">—</div>
+              <div class="r-val" id="r-margin">-</div>
             </div>
-
-            <div class="result-item">
-              <div class="result-left">
-                <div class="result-label">MSP Fee</div>
-                <div class="result-sub" id="r-mspPct">—</div>
-              </div>
-              <div class="result-value" id="r-mspFee">—</div>
+            <div class="r-item">
+              <div class="r-left"><div class="r-label">MSP Fee</div><div class="r-sub" id="r-mspSub">-</div></div>
+              <div class="r-val" id="r-mspFee">-</div>
             </div>
-
-            <div class="result-item">
-              <div class="result-left">
-                <div class="result-label">Loading Cost</div>
-                <div class="result-sub" id="r-loadPct">—</div>
-              </div>
-              <div class="result-value" id="r-loadCost">—</div>
+            <div class="r-item">
+              <div class="r-left"><div class="r-label">Loading Cost</div><div class="r-sub" id="r-loadSub">-</div></div>
+              <div class="r-val" id="r-loadCost">-</div>
             </div>
-
-            <div class="result-item">
-              <div class="result-left">
-                <div class="result-label">Gross Spread</div>
-                <div class="result-sub">bill − pay</div>
-              </div>
-              <div class="result-value" id="r-spread">—</div>
+            <div class="r-item">
+              <div class="r-left"><div class="r-label">Gross Spread</div><div class="r-sub">bill minus pay rate</div></div>
+              <div class="r-val" id="r-spread">-</div>
             </div>
-
           </div>
 
           <div class="divider"></div>
 
-          <!-- GAUGE -->
           <div class="gauge">
-            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-              <span style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text3)">Margin Health</span>
-              <span style="font-size:12px; font-family:var(--mono); color:var(--text2)" id="gaugeLabel">—</span>
+            <div class="gauge-header">
+              <span class="gauge-title">Margin Health</span>
+              <span class="gauge-pct" id="gaugePct">-</span>
             </div>
-            <div class="gauge-track">
-              <div class="gauge-fill" id="gaugeFill"></div>
-            </div>
-            <div class="gauge-meta">
-              <span>0%</span>
-              <span>Target: ≥10%</span>
-              <span>25%+</span>
-            </div>
+            <div class="gauge-track"><div class="gauge-fill" id="gaugeFill"></div></div>
+            <div class="gauge-labels"><span>0%</span><span>Target 10%+</span><span>25%+</span></div>
           </div>
 
-        </div>
-      </div>
-
-      <!-- QUICK REFERENCE -->
-      <div class="card" style="background: linear-gradient(135deg, rgba(230,57,70,0.06), transparent);">
-        <div class="card-body" style="padding:16px 18px;">
-          <div style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--text3); margin-bottom:12px;">Formula Reference</div>
-          <div style="display:flex; flex-direction:column; gap:6px; font-size:12px; font-family:var(--mono); color:var(--text2); line-height:1.7;">
-            <div>MSP Fee = Bill × MSP%</div>
-            <div>Loading = Bill × Load%</div>
-            <div style="color:var(--red); font-weight:500;">Margin = Bill − Pay − MSP − Load</div>
+          <div class="formula-box">
+            <div class="formula-title">Formula Reference</div>
+            <div class="formula-lines">
+              <div>MSP Fee  = Bill x MSP%</div>
+              <div>Loading  = Bill x Load%</div>
+              <div class="key">Margin = Bill - Pay - MSP - Load</div>
+            </div>
           </div>
         </div>
       </div>
-
     </div>
-  </div>
-</main>
 
-<footer class="footer">
-  Zenex Partners · Heart2Hire · <span>Joint Commission Certified</span> · Healthcare Staffing
-</footer>
+  </div>
+</div>
 
 <script>
-  const $ = id => document.getElementById(id);
-  const MSP_LIST = [
-    { name: 'No MSP',        pct: 0 },
-    { name: 'AYA',           pct: 3 },
-    { name: 'SHC',           pct: 4 },
+  var $ = function(id) { return document.getElementById(id); };
+  var activeMsp = 3;
+
+  var MSP_LIST = [
+    { name: 'No MSP', pct: 0 },
+    { name: 'AYA', pct: 3 },
+    { name: 'SHC', pct: 4 },
     { name: 'Focus Connect', pct: 5 },
-    { name: 'AWS',           pct: 6 },
-    { name: 'Favorite',      pct: 7 },
+    { name: 'AWS', pct: 6 },
+    { name: 'Favorite', pct: 7 }
   ];
 
-  let activeMsp = 3;
-
-  function fmt(v, d=2) {
-    if (isNaN(v)) return '—';
-    const neg = v < 0;
-    return (neg ? '-$' : '$') + Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+  function fmt(v, d) {
+    d = d === undefined ? 2 : d;
+    if (isNaN(v)) return '-';
+    return (v < 0 ? '-$' : '$') + Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
   }
 
-  function fmtPct(v) {
-    if (isNaN(v) || !isFinite(v)) return '—';
-    return v.toFixed(1) + '%';
+  function fmtP(v) {
+    return (!isNaN(v) && isFinite(v)) ? v.toFixed(1) + '%' : '-';
   }
 
   function calc() {
-    const bill     = parseFloat($('billRate').value)    || 0;
-    const pay      = parseFloat($('payRate').value)     || 0;
-    const loadPct  = parseFloat($('loadingPct').value)  || 0;
-    const mspPct   = activeMsp === 'custom' ? (parseFloat($('customMsp').value) || 0) : activeMsp;
+    var bill    = parseFloat($('billRate').value)    || 0;
+    var pay     = parseFloat($('payRate').value)     || 0;
+    var loadPct = parseFloat($('loadingPct').value)  || 0;
+    var mspPct  = activeMsp === 'custom' ? (parseFloat($('customMsp').value) || 0) : activeMsp;
 
-    const mspFee   = (bill * mspPct) / 100;
-    const loadCost = (bill * loadPct) / 100;
-    const margin   = bill - pay - mspFee - loadCost;
-    const spread   = bill - pay;
-    const mPct     = bill > 0 ? (margin / bill) * 100 : 0;
+    var mspFee   = (bill * mspPct) / 100;
+    var loadCost = (bill * loadPct) / 100;
+    var margin   = bill - pay - mspFee - loadCost;
+    var spread   = bill - pay;
+    var mPct     = bill > 0 ? (margin / bill) * 100 : 0;
 
-    $('r-mspFee').textContent  = fmt(mspFee);
-    $('r-mspPct').textContent  = fmtPct(mspPct) + ' of bill';
+    $('r-mspFee').textContent   = fmt(mspFee);
+    $('r-mspSub').textContent   = fmtP(mspPct) + ' of bill rate';
     $('r-loadCost').textContent = fmt(loadCost);
-    $('r-loadPct').textContent  = fmtPct(loadPct) + ' of bill';
-    $('r-margin').textContent  = fmt(margin);
-    $('r-marginPct').textContent = fmtPct(mPct) + ' of bill rate';
-    $('r-spread').textContent  = fmt(spread);
-    $('spreadDisplay').value   = spread.toFixed(2);
+    $('r-loadSub').textContent  = fmtP(loadPct) + ' of bill rate';
+    $('r-margin').textContent   = fmt(margin);
+    $('r-marginPct').textContent = fmtP(mPct) + ' of bill rate';
+    $('r-spread').textContent   = fmt(spread);
+    $('spreadDisp').value       = spread.toFixed(2);
+    $('gaugePct').textContent   = fmtP(mPct);
 
-    const mc = $('marginCard');
-    mc.classList.remove('big','negative');
-    if (margin < 0) mc.classList.add('negative');
-    else mc.classList.add('big');
+    var mc = $('marginCard');
+    mc.classList.remove('hero', 'hero-neg');
+    mc.classList.add(margin < 0 ? 'hero-neg' : 'hero');
 
-    const gw = Math.max(0, Math.min((mPct / 25) * 100, 100));
+    var gw = Math.max(0, Math.min((mPct / 25) * 100, 100));
     $('gaugeFill').style.width = gw + '%';
-    $('gaugeLabel').textContent = fmtPct(mPct);
 
-    // Weekly
-    const hours  = parseFloat($('hoursPerWeek').value) || 36;
-    const otH    = parseFloat($('otHours').value)      || 0;
-    const otMult = parseFloat($('otRate').value)       || 1.5;
-    const lodge  = parseFloat($('lodging').value)      || 0;
-    const meals  = parseFloat($('meals').value)        || 0;
-    const regH   = Math.max(0, hours - otH);
-    const taxable = (regH * pay) + (otH * pay * otMult);
-    const nt      = lodge + meals;
-    const total   = taxable + nt;
-    const lm      = loadCost + meals;
+    var hours  = parseFloat($('hoursPerWeek').value) || 36;
+    var otH    = parseFloat($('otHours').value)      || 0;
+    var otMult = parseFloat($('otRate').value)       || 1.5;
+    var lodge  = parseFloat($('lodging').value)      || 0;
+    var meals  = parseFloat($('meals').value)        || 0;
+    var regH   = Math.max(0, hours - otH);
+    var taxable = (regH * pay) + (otH * pay * otMult);
+    var nt      = lodge + meals;
 
-    $('r-taxable').textContent    = fmt(taxable);
-    $('r-taxableSub').textContent = `${regH}h reg + ${otH}h OT`;
-    $('r-nt').textContent         = fmt(nt);
-    $('r-totalWeekly').textContent = fmt(total);
-    $('r-loadMeals').textContent  = fmt(lm);
+    $('r-taxable').textContent   = fmt(taxable);
+    $('r-taxSub').textContent    = regH + 'h reg + ' + otH + 'h OT';
+    $('r-nt').textContent        = fmt(nt);
+    $('r-totalW').textContent    = fmt(taxable + nt);
+    $('r-loadMeals').textContent = fmt(loadCost + meals);
 
-    // MSP table
-    const tbody = $('mspTbody');
+    var tbody = $('mspTbody');
     tbody.innerHTML = '';
-    MSP_LIST.forEach(c => {
-      const fee = (bill * c.pct) / 100;
-      const m   = bill - pay - fee - loadCost;
-      const tr  = document.createElement('tr');
-      if (c.pct === mspPct) tr.classList.add('active-msp');
-      tr.innerHTML = `<td>${c.name}</td><td>${c.pct}%</td><td>${fmt(fee)}</td><td>${fmt(m)}</td>`;
+    for (var i = 0; i < MSP_LIST.length; i++) {
+      var c = MSP_LIST[i];
+      var fee = (bill * c.pct) / 100;
+      var m   = bill - pay - fee - loadCost;
+      var tr  = document.createElement('tr');
+      if (c.pct === mspPct) tr.classList.add('active-row');
+      tr.innerHTML = '<td>' + c.name + '</td><td>' + c.pct + '%</td><td>' + fmt(fee) + '</td><td>' + fmt(m) + '</td>';
       tbody.appendChild(tr);
+    }
+  }
+
+  var pills = document.querySelectorAll('.msp-pill');
+  for (var i = 0; i < pills.length; i++) {
+    pills[i].addEventListener('click', function() {
+      for (var j = 0; j < pills.length; j++) pills[j].classList.remove('active');
+      this.classList.add('active');
+      var v = this.getAttribute('data-val');
+      activeMsp = v === 'custom' ? 'custom' : parseFloat(v);
+      $('customMspRow').style.display = v === 'custom' ? '' : 'none';
+      calc();
     });
   }
 
-  // MSP Pills
-  document.querySelectorAll('.msp-pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      document.querySelectorAll('.msp-pill').forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-      const val = pill.dataset.val;
-      activeMsp = val === 'custom' ? 'custom' : parseFloat(val);
-      $('customMspRow').style.display = val === 'custom' ? '' : 'none';
-      calc();
-    });
-  });
-
   function toggleCollapse(id) {
-    const body    = $(id + 'Body');
-    const trigger = $(id + 'Trigger');
-    const isOpen  = body.classList.contains('open');
-    body.classList.toggle('open', !isOpen);
-    trigger.classList.toggle('open', !isOpen);
+    var body = $(id + 'Body');
+    var btn  = $(id + 'Trigger');
+    var open = body.classList.contains('open');
+    body.classList.toggle('open', !open);
+    btn.classList.toggle('open', !open);
   }
 
   function resetDefaults() {
-    $('billRate').value    = 65;
-    $('payRate').value     = 46;
-    $('loadingPct').value  = 15;
-    $('lodging').value     = 0;
-    $('meals').value       = 0;
-    $('ntLimit').value     = 0;
+    $('billRate').value     = 65;
+    $('payRate').value      = 46;
+    $('loadingPct').value   = 15;
+    $('lodging').value      = 0;
+    $('meals').value        = 0;
+    $('ntLimit').value      = 0;
     $('hoursPerWeek').value = 36;
-    $('otRate').value      = 1.5;
-    $('otHours').value     = 0;
-    document.querySelectorAll('.msp-pill').forEach(p => p.classList.remove('active'));
+    $('otRate').value       = 1.5;
+    $('otHours').value      = 0;
+    for (var j = 0; j < pills.length; j++) pills[j].classList.remove('active');
     document.querySelector('[data-val="3"]').classList.add('active');
     activeMsp = 3;
     $('customMspRow').style.display = 'none';
     calc();
   }
 
-  ['billRate','payRate','loadingPct','customMsp','lodging','meals','ntLimit','hoursPerWeek','otRate','otHours']
-    .forEach(id => { const el = $(id); if (el) el.addEventListener('input', calc); });
+  var ids = ['billRate','payRate','loadingPct','customMsp','lodging','meals','ntLimit','hoursPerWeek','otRate','otHours'];
+  for (var k = 0; k < ids.length; k++) {
+    var el = $(ids[k]);
+    if (el) el.addEventListener('input', calc);
+  }
 
   calc();
 </script>
