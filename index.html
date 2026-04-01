@@ -365,7 +365,7 @@
           <div class="results-stack">
             <div class="r-item hero" id="marginCard">
               <div class="r-left">
-                <div class="r-label">Net Margin</div>
+                <div class="r-label">Gross Margin</div>
                 <div class="r-sub" id="r-marginPct">—</div>
               </div>
               <div class="r-val" id="r-margin">—</div>
@@ -373,6 +373,10 @@
             <div class="r-item">
               <div class="r-left"><div class="r-label">MSP Fee</div><div class="r-sub" id="r-mspSub">—</div></div>
               <div class="r-val" id="r-mspFee">—</div>
+            </div>
+            <div class="r-item">
+              <div class="r-left"><div class="r-label">Effective Bill Rate</div><div class="r-sub">bill rate − msp fee</div></div>
+              <div class="r-val" id="r-effBill">—</div>
             </div>
             <div class="r-item">
               <div class="r-left"><div class="r-label">Loading Cost</div><div class="r-sub" id="r-loadSub">—</div></div>
@@ -387,9 +391,11 @@
           <div class="formula-box">
             <div class="formula-title">Quick Formula</div>
             <div class="formula-lines">
-              <div>MSP Fee  = Bill x MSP%</div>
-              <div>Loading  = Bill x Load%</div>
-              <div class="key">Margin = Bill - Pay - MSP - Load</div>
+              <div>MSP Fee    = Bill × MSP%</div>
+              <div>Eff. Bill  = Bill − MSP Fee</div>
+              <div>Loading    = Pay × Load%</div>
+              <div class="key">Margin = Eff. Bill − Pay − Loading</div>
+              <div class="key">Margin % = Margin ÷ Eff. Bill</div>
             </div>
           </div>
         </div>
@@ -415,6 +421,52 @@
 
     <div class="collapse-body" id="docBody" style="border-radius: 0 0 var(--radius) var(--radius); border: 1px solid var(--border); border-top: none; box-shadow: var(--shadow); padding: 24px;">
 
+    <!-- OLD vs NEW CALCULATION COMPARISON -->
+    <div style="margin-bottom:20px;">
+      <div class="doc-card fade" style="max-width:100%;">
+        <div class="doc-card-header">
+          <div class="doc-card-icon yellow">🔄</div>
+          <div>
+            <div class="doc-card-title">Old vs New Calculation — Side by Side</div>
+            <div class="doc-card-sub">Example: Bill Rate $45 · Pay Rate $32 · MSP 3% · Loading 15%</div>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+
+          <!-- OLD -->
+          <div style="background:var(--red-light); border:1px solid rgba(212,32,39,0.2); border-radius:var(--radius-sm); padding:14px 16px;">
+            <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--red); margin-bottom:10px;">Old Method</div>
+            <div style="font-family:var(--mono); font-size:12px; color:var(--text2); line-height:2;">
+              <div>MSP Fee  = $45 × 3%  = <strong style="color:var(--text);">$1.35</strong></div>
+              <div>Loading  = $45 × 15% = <strong style="color:var(--text);">$6.75</strong> <span style="color:var(--red);">← on bill rate</span></div>
+              <div style="border-top:1px solid rgba(212,32,39,0.2); margin:6px 0;"></div>
+              <div>Margin   = $45 − $32 − $1.35 − $6.75</div>
+              <div>         = <strong style="color:var(--red); font-size:14px;">$4.90</strong></div>
+              <div>Margin % = $4.90 ÷ $45 = <strong style="color:var(--red); font-size:14px;">10.89%</strong></div>
+            </div>
+          </div>
+
+          <!-- NEW -->
+          <div style="background:var(--green-bg); border:1px solid var(--green-bdr); border-radius:var(--radius-sm); padding:14px 16px;">
+            <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--green); margin-bottom:10px;">New Method (Current)</div>
+            <div style="font-family:var(--mono); font-size:12px; color:var(--text2); line-height:2;">
+              <div>MSP Fee   = $45 × 3%  = <strong style="color:var(--text);">$1.35</strong></div>
+              <div>Eff. Bill = $45 − $1.35 = <strong style="color:var(--text);">$43.65</strong></div>
+              <div>Loading   = $32 × 15% = <strong style="color:var(--text);">$4.80</strong> <span style="color:var(--green);">← on pay rate</span></div>
+              <div style="border-top:1px solid var(--green-bdr); margin:6px 0;"></div>
+              <div>Margin    = $43.65 − $32 − $4.80</div>
+              <div>          = <strong style="color:var(--green); font-size:14px;">$6.85</strong></div>
+              <div>Margin %  = $6.85 ÷ $43.65 = <strong style="color:var(--green); font-size:14px;">15.70%</strong></div>
+            </div>
+          </div>
+
+        </div>
+        <div style="margin-top:12px; background:var(--blue-bg); border:1px solid var(--blue-bdr); border-radius:var(--radius-sm); padding:10px 14px; font-size:12px; color:var(--text2); line-height:1.6;">
+          <strong style="color:var(--blue);">Key difference:</strong> Loading cost is now applied to the <strong>pay rate</strong> (not bill rate), and margin % is divided by the <strong>effective bill rate</strong> (after MSP). This gives a more accurate picture of Zenex's true margin.
+        </div>
+      </div>
+    </div>
+
     <div class="doc-grid" style="margin-top:0;">
 
       <!-- CORE FORMULAS -->
@@ -434,9 +486,15 @@
         </div>
 
         <div class="formula-block">
+          <div class="fb-name">Effective Bill Rate</div>
+          <div class="fb-eq"><span class="hi">Eff. Bill Rate</span> = Bill Rate − MSP Fee</div>
+          <div class="fb-desc">The bill rate after the MSP fee is deducted. This is the actual revenue Zenex retains before paying the candidate and covering costs.</div>
+        </div>
+
+        <div class="formula-block">
           <div class="fb-name">Loading Cost $</div>
-          <div class="fb-eq"><span class="hi">Loading Cost $</span> = Bill Rate × (Loading% ÷ 100)</div>
-          <div class="fb-desc">Covers employer burden: payroll taxes (FICA, FUTA, SUTA), workers comp, general liability, benefits, and overhead costs.</div>
+          <div class="fb-eq"><span class="hi">Loading Cost $</span> = Pay Rate × (Loading% ÷ 100)</div>
+          <div class="fb-desc">Covers employer burden: payroll taxes (FICA, FUTA, SUTA), workers comp, general liability, benefits, and overhead costs. Calculated on pay rate.</div>
         </div>
 
         <div class="formula-block">
@@ -446,15 +504,15 @@
         </div>
 
         <div class="formula-block">
-          <div class="fb-name">Net Margin $ ← Key Figure</div>
-          <div class="fb-eq"><span class="hi">Net Margin</span> = Bill Rate − Pay Rate − MSP Fee − Loading Cost</div>
+          <div class="fb-name">Gross Margin $ ← Key Figure</div>
+          <div class="fb-eq"><span class="hi">Gross Margin</span> = Eff. Bill Rate − Pay Rate − Loading Cost</div>
           <div class="fb-desc">The actual dollar profit per hour after all deductions. This is Zenex's per-hour revenue on the placement.</div>
         </div>
 
         <div class="formula-block">
           <div class="fb-name">Margin %</div>
-          <div class="fb-eq"><span class="hi">Margin %</span> = (Net Margin ÷ Bill Rate) × 100</div>
-          <div class="fb-desc">Net margin as a percentage of the bill rate. Used to measure the health and efficiency of a placement.</div>
+          <div class="fb-eq"><span class="hi">Margin %</span> = (Gross Margin ÷ Eff. Bill Rate) × 100</div>
+          <div class="fb-desc">Gross margin as a percentage of the effective bill rate. Used to measure the health and efficiency of a placement.</div>
         </div>
       </div>
 
@@ -470,7 +528,7 @@
         <div class="def-list">
           <div class="def-item">
             <div class="def-term">Bill Rate</div>
-            <div class="def-desc"><strong>The hourly rate charged to the client/facility.</strong> This is the top-line revenue figure. All percentages (MSP, Loading) are calculated off this number.</div>
+            <div class="def-desc"><strong>The hourly rate charged to the client/facility.</strong> This is the top-line revenue figure. MSP% is calculated off this number. After deducting the MSP fee you get the Effective Bill Rate.</div>
           </div>
           <div class="def-item">
             <div class="def-term">Pay Rate</div>
@@ -482,7 +540,7 @@
           </div>
           <div class="def-item">
             <div class="def-term">Loading Cost %</div>
-            <div class="def-desc"><strong>Employer burden and overhead.</strong> Covers FICA (7.65%), FUTA/SUTA, workers comp, general liability insurance, benefits admin, and company overhead. Default: 15%.</div>
+            <div class="def-desc"><strong>Employer burden and overhead.</strong> Covers FICA (7.65%), FUTA/SUTA, workers comp, general liability insurance, benefits admin, and company overhead. Calculated as a % of pay rate. Default: 15%.</div>
           </div>
           <div class="def-item">
             <div class="def-term">Gross Spread</div>
@@ -680,17 +738,19 @@
     var mspPct  = activeMsp === 'custom' ? (parseFloat($('customMsp').value) || 0) : activeMsp;
 
     var mspFee   = (bill * mspPct) / 100;
-    var loadCost = (bill * loadPct) / 100;
-    var margin   = bill - pay - mspFee - loadCost;
+    var effBill  = bill - mspFee;
+    var loadCost = (pay * loadPct) / 100;
+    var margin   = effBill - pay - loadCost;
     var spread   = bill - pay;
-    var mPct     = bill > 0 ? (margin / bill) * 100 : 0;
+    var mPct     = effBill > 0 ? (margin / effBill) * 100 : 0;
 
     $('r-mspFee').textContent    = fmt(mspFee);
     $('r-mspSub').textContent    = fmtP(mspPct) + ' of bill rate';
+    $('r-effBill').textContent   = fmt(effBill);
     $('r-loadCost').textContent  = fmt(loadCost);
-    $('r-loadSub').textContent   = fmtP(loadPct) + ' of bill rate';
+    $('r-loadSub').textContent   = fmtP(loadPct) + ' of pay rate';
     $('r-margin').textContent    = fmt(margin);
-    $('r-marginPct').textContent = fmtP(mPct) + ' of bill rate';
+    $('r-marginPct').textContent = fmtP(mPct) + ' of effective bill rate';
     $('r-spread').textContent    = fmt(spread);
     $('spreadDisp').value        = spread.toFixed(2);
 
@@ -730,7 +790,8 @@
     for (var i = 0; i < MSP_LIST.length; i++) {
       var c   = MSP_LIST[i];
       var fee = (bill * c.pct) / 100;
-      var m   = bill - pay - fee - loadCost;
+      var eb  = bill - fee;
+      var m   = eb - pay - loadCost;
       var tr  = document.createElement('tr');
       if (c.pct === mspPct) tr.classList.add('active-row');
       tr.innerHTML = '<td>' + c.name + '</td><td>' + c.pct + '%</td><td>' + fmt(fee) + '</td><td>' + fmt(m) + '</td>';
